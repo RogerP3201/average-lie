@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>平均的謊言｜你來設計一堂課</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0e1621;--card:#16212e;--line:#24344a;--ink:#eef2f6;--dim:#8497a8;--ok:#4ade80;--no:#f87171;--gold:#fbbf24;--blue:#3b82f6}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;padding:22px 16px 70px}
+.wrap{max-width:780px;margin:0 auto}
+h1{font-size:1.6rem;font-weight:900;letter-spacing:.04em;margin-bottom:4px}
+.sub{color:var(--dim);font-size:.92rem;margin-bottom:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:16px}
+.card h2{font-size:1.14rem;margin-bottom:6px}
+.card p{color:#cbd6e0;font-size:.95rem}
+.dec{margin:18px 0}
+.dec .lab{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.dec .lab b{font-size:1rem}
+.dec .lab span{color:var(--gold);font-size:.82rem}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{flex:1;min-width:92px;text-align:center;padding:10px 6px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;font-size:.86rem;background:#101a25;transition:.12s}
+.opt small{display:block;color:var(--dim);font-size:.72rem;margin-top:2px}
+.opt:hover{border-color:#3d5678}
+.opt.sel{background:var(--blue);border-color:var(--blue);color:#fff}
+.opt.sel small{color:#dbeafe}
+button.go{width:100%;background:var(--blue);color:#fff;border:0;border-radius:12px;padding:15px;font:inherit;font-weight:900;font-size:1.02rem;cursor:pointer;margin-top:8px}
+button.go:disabled{background:#33465e;cursor:not-allowed}
+button.ghost{width:100%;background:none;color:var(--dim);border:1px solid var(--line);border-radius:10px;padding:11px;font:inherit;cursor:pointer;margin-top:10px}
+.report{background:#101a25;border:1px solid var(--line);border-radius:12px;padding:18px;text-align:center}
+.huge{font-size:3rem;font-weight:900;line-height:1.15}
+.mid{font-size:1.6rem;font-weight:900}
+.gold{color:var(--gold)}.ok{color:var(--ok)}.no{color:var(--no)}.dimc{color:var(--dim)}
+.kids{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px;margin-top:14px}
+.kid{border:1.5px solid var(--line);border-radius:10px;padding:9px 10px;font-size:.78rem;background:#101a25;opacity:0;transform:translateY(6px)}
+.kid.in{opacity:1;transform:none;transition:all .26s}
+.kid b{display:block;font-size:.84rem;margin-bottom:2px}
+.kid .sc{float:right;font-weight:900}
+.kid.fit{border-color:#2f6f52;background:#12251c}
+.kid.easy{border-color:#7a6320;background:#241f0f}
+.kid.hard{border-color:#7a3b38;background:#26161a}
+.kid .why{font-size:.72rem;margin-top:3px;color:var(--dim)}
+.kid.hard .why{color:var(--no)}.kid.easy .why{color:var(--gold)}.kid.fit .why{color:var(--ok)}
+.quote{border-left:3px solid var(--gold);padding-left:14px;margin:14px 0;color:#dbe4ec}
+.share{background:#101a25;border:1px dashed var(--line);border-radius:10px;padding:12px;font-size:.86rem;color:#cbd6e0;white-space:pre-wrap;margin-top:10px}
+.foot{color:var(--dim);font-size:.78rem;margin-top:26px;line-height:1.8}
+.tag{display:inline-block;font-size:.72rem;color:var(--gold);border:1px solid #4a3b12;background:#1d1808;padding:2px 8px;border-radius:99px;margin-bottom:8px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin-top:12px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px}
+.hide{display:none}
+.src{font-size:.76rem;color:var(--dim);margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>平均的謊言</h1>
+  <div class="sub">你來設計一堂投籃課，班上二十六個人。這一堂課的成果報表，會由你自己交出去。</div>
+
+  <!-- 第一回合 -->
+  <div id="r1">
+    <div class="card">
+      <span class="tag">第一回合</span>
+      <h2>照平均設計，這是最公平的做法</h2>
+      <p>每一項旁邊都寫著這個班的平均。用平均設計，沒有人被特別對待，也沒有人被特別放棄。聽起來很合理。</p>
+      <div id="decs1"></div>
+      <button class="go" id="btn1" disabled onclick="run(1)">上課，然後交出成果報表</button>
+    </div>
+  </div>
+
+  <!-- 報表（第一回合） -->
+  <div id="rep1" class="hide">
+    <div class="card">
+      <span class="tag">成果報表</span>
+      <h2>這節課的班級平均</h2>
+      <div class="report">
+        <div class="dimc" style="font-size:.85rem">全班平均每人投進</div>
+        <div class="huge ok" id="avg1">0</div>
+        <div class="dimc" style="font-size:.85rem">顆　（十球中）</div>
+      </div>
+      <p style="margin-top:14px" id="verdict1"></p>
+      <button class="go" onclick="reveal1()">但是，平均是二十六個人</button>
+    </div>
+  </div>
+
+  <!-- 攤開（第一回合） -->
+  <div id="open1" class="hide">
+    <div class="card">
+      <h2>把平均攤開來，一個人一格</h2>
+      <div class="kids" id="kids1"></div>
+      <div class="legend">
+        <span><i class="dot" style="background:#4ade80"></i>練到了</span>
+        <span><i class="dot" style="background:#fbbf24"></i>投得很順，但太簡單，這節課他沒在練</span>
+        <span><i class="dot" style="background:#f87171"></i>整節課投不到兩球</span>
+      </div>
+      <div class="quote" id="hidden1"></div>
+      <p>平均值沒有說謊。<b class="gold">它只是把人藏起來了。</b>報表上的那個數字，讓這些人看不見。</p>
+      <button class="go" onclick="showDaniels()">為什麼照平均設計會這樣？</button>
+    </div>
+  </div>
+
+  <!-- 揭曉 -->
+  <div id="dan" class="hide">
+    <div class="card">
+      <span class="tag">這不是比喻，是真的發生過的事</span>
+      <h2>1952 年，美國空軍也照平均設計過</h2>
+      <p>那幾年墜機太多。空軍要重做座艙，量了 <b>4,063 名飛行員</b>的身高、胸圍、臂長等十個尺寸，準備照平均值來做。</p>
+      <p style="margin-top:10px">動手之前，研究員 Gilbert Daniels 先問了一個問題：<b>這四千多人裡，有幾個人真的是「平均」的？</b>他把標準放得很寬，十個尺寸每一個只要落在中間 30% 就算平均。</p>
+      <div class="quote"><span class="huge gold" style="font-size:2.4rem">0 人</span>一個都沒有。就算只挑其中三個尺寸來看，符合的也不到 4%。</div>
+      <p>每個人都在某幾項偏大、某幾項偏小。<b>照平均做的座艙，等於沒有為任何一個飛行員做。</b></p>
+      <p style="margin-top:10px">空軍後來換了做法：<b class="gold">座椅可調、踏板可調、頭盔帶可調。</b>那些調整不是為某個特別的人加裝的，是為了讓每個人都坐得進去。</p>
+      <p style="margin-top:10px">你的班上也一樣：<b class="gold">沒有一個人是「平均的學生」。</b></p>
+      <div class="src">Daniels, G. S. (1952). <i>The “Average Man”?</i> (Technical Note WCRD 53-7). Wright Air Development Center.</div>
+      <button class="go" onclick="startR2()">那我重新設計一次</button>
+    </div>
+  </div>
+
+  <!-- 第二回合（即時） -->
+  <div id="r2" class="hide">
+    <div class="card">
+      <span class="tag">第二回合</span>
+      <h2>同一個活動，開幾條路</h2>
+      <p>每一項都可以複選。你每點一下，下面二十六個人就立刻重算。不是為某個人開特例，是讓同一個活動有幾種做法，每個人自己走得進去。</p>
+      <div id="decs2"></div>
+      <div class="report" style="margin-top:14px;display:flex;justify-content:space-around;text-align:center">
+        <div><div class="mid ok" id="n_fit">0</div><div class="dimc" style="font-size:.78rem">練到了</div></div>
+        <div><div class="mid gold" id="n_easy">0</div><div class="dimc" style="font-size:.78rem">太簡單</div></div>
+        <div><div class="mid no" id="n_hard">0</div><div class="dimc" style="font-size:.78rem">投不到兩球</div></div>
+        <div><div class="mid" id="paths">0</div><div class="dimc" style="font-size:.78rem">你開的路</div></div>
+      </div>
+      <div class="kids" id="kidsLive"></div>
+      <div id="hintBox" class="quote hide"></div>
+      <button class="ghost" onclick="hint()">哪一條路最划算？</button>
+      <button class="go" id="btn2" disabled onclick="run(2)">好了，交出這一次的報表</button>
+    </div>
+  </div>
+
+  <!-- 報表（第二回合） -->
+  <div id="rep2" class="hide">
+    <div class="card">
+      <span class="tag">成果報表</span>
+      <h2>這一次的班級平均</h2>
+      <div class="report">
+        <div class="dimc" style="font-size:.85rem">全班平均每人投進</div>
+        <div class="huge ok" id="avg2">0</div>
+        <div class="dimc" style="font-size:.85rem">顆　（十球中）</div>
+      </div>
+      <div class="kids" id="kids2"></div>
+      <div class="legend">
+        <span><i class="dot" style="background:#4ade80"></i>練到了</span>
+        <span><i class="dot" style="background:#fbbf24"></i>太簡單，沒在練</span>
+        <span><i class="dot" style="background:#f87171"></i>幾乎沒投進</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2 id="verdict2"></h2>
+      <p id="verdictBody"></p>
+      <div class="quote" style="font-size:1.14rem;font-weight:700;color:var(--gold)">平均不是一個人。<br>為平均設計，等於為沒有人設計。</div>
+      <div class="share" id="shareText"></div>
+      <button class="ghost" onclick="copyShare()">複製這段文字</button>
+      <button class="ghost" onclick="backToR2()">回去再調調看</button>
+      <button class="ghost" onclick="location.reload()">從頭再玩一次</button>
+    </div>
+  </div>
+
+  <div class="foot">
+    教學用互動演示，不是評量，不會收集任何資料。班上二十六個學生是虛構的，但每一種需求都來自真實的體育課。
+  </div>
+</div>
+
+<script>
+const DECS = [
+  { key:"hoop", name:"籃框高度", avg:"班上平均身高 158 公分",
+    opts:[{v:200,t:"200 公分",s:"矮框"},{v:230,t:"230 公分",s:"中框"},{v:260,t:"260 公分",s:"照平均"},{v:305,t:"305 公分",s:"標準框"}] },
+  { key:"ball", name:"球",       avg:"平均握力 24 公斤",
+    opts:[{v:1,t:"3 號輕球",s:"軟、輕"},{v:2,t:"5 號球",s:"照平均"},{v:3,t:"7 號標準球",s:"比賽用"}] },
+  { key:"dist", name:"投籃線距離", avg:"平均投擲距離 4.1 公尺",
+    opts:[{v:2,t:"2 公尺",s:"近"},{v:3,t:"3 公尺",s:"中"},{v:4,t:"4 公尺",s:"照平均"},{v:5,t:"5.2 公尺",s:"正式罰球線"}] },
+  { key:"cue",  name:"指令方式",  avg:"多數人聽一次就懂",
+    opts:[{v:1,t:"口頭說明",s:"照平均"},{v:2,t:"口頭＋示範",s:"看得到動作"},{v:3,t:"口頭＋示範＋圖卡",s:"步驟看得見"},{v:4,t:"再加個別提示",s:"一步一步陪"}] }
+];
+
+/* 每個學生的三個區間：低於下限＝太簡單（投得進但沒在練），高於上限＝做不到。
+   cue 是需要的最低指令層級，給得比需要的多不會傷害任何人。 */
+const KIDS = [
+  {n:"小宇", d:"輪椅使用者",       hoop:[200,230], ball:[1,2], dist:[2,3], cue:1},
+  {n:"書涵", d:"腦性麻痺，助行器", hoop:[200,230], ball:[1,1], dist:[2,3], cue:1},
+  {n:"哲瑋", d:"視覺障礙",         hoop:[230,305], ball:[2,3], dist:[2,4], cue:4},
+  {n:"庭萱", d:"聽覺障礙",         hoop:[230,305], ball:[2,3], dist:[3,5], cue:2},
+  {n:"柏丞", d:"自閉症",           hoop:[230,305], ball:[2,3], dist:[3,5], cue:3},
+  {n:"于晴", d:"注意力不足",       hoop:[230,305], ball:[2,3], dist:[3,5], cue:1},
+  {n:"冠霖", d:"發展協調障礙",     hoop:[200,260], ball:[1,2], dist:[2,4], cue:1},
+  {n:"雅婷", d:"氣喘",             hoop:[230,305], ball:[2,3], dist:[3,5], cue:1},
+  {n:"承翰", d:"肌肉萎縮症",       hoop:[200,200], ball:[1,1], dist:[2,2], cue:2},
+  {n:"若瑄", d:"身高 142 公分",    hoop:[200,260], ball:[1,2], dist:[2,4], cue:1},
+  {n:"宗霖", d:"新生，沒打過球",   hoop:[230,260], ball:[1,2], dist:[2,4], cue:3},
+  {n:"品彤", d:"手腕舊傷",         hoop:[230,305], ball:[1,2], dist:[2,4], cue:1},
+  {n:"睿哲", d:"校隊",             hoop:[305,305], ball:[3,3], dist:[4,5], cue:1},
+  {n:"曉琳", d:"校隊",             hoop:[260,305], ball:[3,3], dist:[4,5], cue:1},
+  {n:"信廷", d:"體重偏高",         hoop:[230,305], ball:[2,3], dist:[2,4], cue:1},
+  {n:"筱潔", d:"智能障礙",         hoop:[200,260], ball:[1,2], dist:[2,4], cue:4},
+  {n:"家豪", d:"一般",             hoop:[230,305], ball:[2,3], dist:[3,5], cue:1},
+  {n:"佩蓉", d:"一般",             hoop:[230,305], ball:[2,3], dist:[3,5], cue:1},
+  {n:"俊凱", d:"一般",             hoop:[260,305], ball:[2,3], dist:[3,5], cue:1},
+  {n:"詩涵", d:"一般，怕球",       hoop:[230,305], ball:[1,2], dist:[2,4], cue:1},
+  {n:"建霖", d:"一般",             hoop:[230,305], ball:[2,3], dist:[3,5], cue:1},
+  {n:"宜靜", d:"一般，個子小",     hoop:[200,260], ball:[1,3], dist:[2,4], cue:1},
+  {n:"逸帆", d:"截肢，單側上肢",   hoop:[230,260], ball:[1,2], dist:[2,3], cue:1},
+  {n:"心怡", d:"一般",             hoop:[230,305], ball:[2,3], dist:[3,5], cue:1},
+  {n:"允碩", d:"癲癇，用藥中",     hoop:[230,305], ball:[2,3], dist:[3,4], cue:1},
+  {n:"語彤", d:"一般",             hoop:[260,305], ball:[2,3], dist:[3,5], cue:1}
+];
+
+let sel1={}, sel2={hoop:[],ball:[],dist:[],cue:[]}, res1=null;
+
+function drawR1(){
+  document.getElementById("decs1").innerHTML = DECS.map(d=>`
+    <div class="dec">
+      <div class="lab"><b>${d.name}</b><span>${d.avg}</span></div>
+      <div class="opts">${d.opts.map(o=>`
+        <div class="opt${sel1[d.key]===o.v?" sel":""}" onclick="pick1('${d.key}',${o.v})">${o.t}<small>${o.s}</small></div>`).join("")}
+      </div>
+    </div>`).join("");
+  document.getElementById("btn1").disabled = Object.keys(sel1).length < DECS.length;
+}
+function pick1(k,v){ sel1[k]=v; drawR1(); }
+
+function drawR2(){
+  document.getElementById("decs2").innerHTML = DECS.map(d=>`
+    <div class="dec">
+      <div class="lab"><b>${d.name}</b><span>可複選</span></div>
+      <div class="opts">${d.opts.map(o=>`
+        <div class="opt${sel2[d.key].includes(o.v)?" sel":""}" onclick="pick2('${d.key}',${o.v})">${o.t}<small>${o.s}</small></div>`).join("")}
+      </div>
+    </div>`).join("");
+  const empty = Object.values(sel2).some(a=>a.length===0);
+  document.getElementById("paths").textContent = Object.values(sel2).reduce((s,a)=>s+a.length,0);
+  document.getElementById("btn2").disabled = empty;
+  if(empty){
+    document.getElementById("kidsLive").innerHTML="";
+    ["n_fit","n_easy","n_hard"].forEach(id=>document.getElementById(id).textContent="0");
+    return;
+  }
+  const rs = KIDS.map(k=>({k, r:evalKid(k, sel2)}));
+  document.getElementById("n_fit").textContent  = rs.filter(x=>x.r.st==="fit").length;
+  document.getElementById("n_easy").textContent = rs.filter(x=>x.r.st==="easy").length;
+  document.getElementById("n_hard").textContent = rs.filter(x=>x.r.st==="hard").length;
+  const box=document.getElementById("kidsLive");
+  box.innerHTML = rs.map(x=>`
+    <div class="kid ${x.r.st} in">
+      <span class="sc">${x.r.sc}</span><b>${x.k.n}</b>${x.k.d}
+      <div class="why">${x.r.why}</div>
+    </div>`).join("");
+  document.getElementById("hintBox").classList.add("hide");
+}
+function hint(){
+  const base = KIDS.map(k=>evalKid(k, sel2)).filter(r=>r.st==="fit").length;
+  const gains=[];
+  DECS.forEach(d=>{
+    d.opts.forEach(o=>{
+      if(sel2[d.key].includes(o.v)) return;
+      const trial = { hoop:[...sel2.hoop], ball:[...sel2.ball], dist:[...sel2.dist], cue:[...sel2.cue] };
+      trial[d.key].push(o.v);
+      const n = KIDS.map(k=>evalKid(k, trial)).filter(r=>r.st==="fit").length;
+      gains.push({ name:d.name, t:o.t, gain:n-base });
+    });
+  });
+  gains.sort((a,b)=>b.gain-a.gain);
+  const top = gains.slice(0,3).map(g=>
+    `<b>${g.name}：${g.t}</b>　${g.gain>0 ? `多練到 <b class="ok">${g.gain}</b> 人` : (g.gain<0 ? `反而少 ${-g.gain} 人` : "沒有人因此被接住")}`).join("<br>");
+  const box=document.getElementById("hintBox");
+  box.innerHTML = `再開一條路的話，這三個選項的效果是：<br>${top}<br><span class="dimc" style="font-size:.82rem">同一件事有很多種解法，這只是其中一條線索。</span>`;
+  box.classList.remove("hide");
+}
+function pick2(k,v){
+  const a=sel2[k], i=a.indexOf(v);
+  if(i>=0) a.splice(i,1); else a.push(v);
+  drawR2();
+}
+function startR2(){
+  sel2={ hoop:[sel1.hoop], ball:[sel1.ball], dist:[sel1.dist], cue:[sel1.cue] };
+  document.getElementById("dan").classList.add("hide");
+  document.getElementById("r2").classList.remove("hide");
+  drawR2(); window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* 判定：先看有沒有一條路是「剛剛好」的（三項都落在區間內，且指令夠）。
+   沒有的話，看是被難度擋掉（hard），還是每一條路都太簡單（easy）。 */
+function evalKid(kid, d){
+  const cueOK = d.cue.some(v=>v>=kid.cue);
+  const inRange = (vals,[lo,hi]) => vals.some(v=>v>=lo && v<=hi);
+  const allTooLow = (vals,[lo,hi]) => vals.every(v=>v<lo);
+
+  const hoopFit=inRange(d.hoop,kid.hoop), ballFit=inRange(d.ball,kid.ball), distFit=inRange(d.dist,kid.dist);
+  if(hoopFit && ballFit && distFit && cueOK) return {st:"fit", sc:7, why:"練到了"};
+
+  const why=[];
+  if(!cueOK) why.push("聽不懂要做什麼");
+  if(!hoopFit) why.push(allTooLow(d.hoop,kid.hoop) ? "框太矮" : "框太高");
+  if(!ballFit) why.push(allTooLow(d.ball,kid.ball) ? "球太輕" : "球太重");
+  if(!distFit) why.push(allTooLow(d.dist,kid.dist) ? "線太近" : "線太遠");
+
+  const tooEasy = cueOK
+    && (hoopFit || allTooLow(d.hoop,kid.hoop))
+    && (ballFit || allTooLow(d.ball,kid.ball))
+    && (distFit || allTooLow(d.dist,kid.dist));
+
+  if(tooEasy) return {st:"easy", sc:9, why:"投得很順，但太簡單（"+why.join("、")+"）"};
+  return {st:"hard", sc:2, why: why.join("、")};
+}
+
+function run(round){
+  const d = round===1 ? {hoop:[sel1.hoop],ball:[sel1.ball],dist:[sel1.dist],cue:[sel1.cue]} : sel2;
+  const rs = KIDS.map(k=>({k, r:evalKid(k,d)}));
+  const avg = (rs.reduce((s,x)=>s+x.r.sc,0)/rs.length).toFixed(1);
+  const fit = rs.filter(x=>x.r.st==="fit").length;
+  const easy= rs.filter(x=>x.r.st==="easy").length;
+  const hard= rs.filter(x=>x.r.st==="hard").length;
+
+  if(round===1){
+    res1={avg,fit,easy,hard,rs};
+    document.getElementById("r1").classList.add("hide");
+    document.getElementById("rep1").classList.remove("hide");
+    document.getElementById("avg1").textContent = avg;
+    document.getElementById("verdict1").innerHTML =
+      `十球投五球以上算及格，你的班平均 <b>${avg}</b>。報表交出去不會有人質疑，這節課看起來上得不錯。`;
+    window.scrollTo({top:0,behavior:"smooth"});
+  }else{
+    document.getElementById("r2").classList.add("hide");
+    document.getElementById("rep2").classList.remove("hide");
+    document.getElementById("avg2").textContent = avg;
+    paint("kids2", rs);
+    verdict2(fit, easy, hard);
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+}
+function paint(boxId, rs){
+  const box=document.getElementById(boxId);
+  box.innerHTML = rs.map(x=>`
+    <div class="kid ${x.r.st}">
+      <span class="sc">${x.r.sc}</span><b>${x.k.n}</b>${x.k.d}
+      <div class="why">${x.r.why}</div>
+    </div>`).join("");
+  [...box.children].forEach((el,i)=>setTimeout(()=>el.classList.add("in"), i*40));
+}
+function reveal1(){
+  document.getElementById("open1").classList.remove("hide");
+  paint("kids1", res1.rs);
+  document.getElementById("hidden1").innerHTML =
+    `平均 ${res1.avg} 顆的底下，是這樣的：<br>
+     <b class="ok">${res1.fit} 人</b>真的練到了。
+     <b class="gold">${res1.easy} 人</b>投得很順，但對他來說太簡單，這節課等於沒上。
+     <b class="no">${res1.hard} 人</b>整節課投不到兩球。`;
+  document.getElementById("rep1").classList.add("hide");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function showDaniels(){
+  document.getElementById("open1").classList.add("hide");
+  document.getElementById("dan").classList.remove("hide");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function verdict2(fit, easy, hard){
+  const paths = Object.values(sel2).reduce((s,a)=>s+a.length,0);
+  const v=document.getElementById("verdict2"), b=document.getElementById("verdictBody");
+
+  // 你比第一回合多準備了什麼
+  const added=[];
+  DECS.forEach(d=>{
+    sel2[d.key].forEach(v2=>{
+      if(v2!==sel1[d.key]) added.push(d.opts.find(o=>o.v===v2).t);
+    });
+  });
+  const addList = added.length ? added.join("、") : "什麼都沒多加";
+
+  if(hard===0 && easy===0){
+    v.innerHTML = `二十六個人，每一個都練到了。你開了 <span class="gold">${paths}</span> 條路。`;
+    b.innerHTML = `你比第一回合多準備的，只有這些：<b class="gold">${addList}</b>。<br><br>
+      注意這份清單裡<b>沒有任何一樣是為某一個學生特製的</b>。你沒有幫小宇做一顆特別的球，也沒有幫哲瑋開一堂補救課。你只是讓同一個活動有幾種做法，然後每個人自己走得進去。<br><br>
+      這就是通用設計。它不是在原本的課之外多做一份，是<b>一開始就別把路修窄</b>。<br><br>
+      還有一件事值得注意：第一回合那九個投不到兩球的人，不是因為他們「比較差」。他們是<b>設計的結果</b>。換一種設計，他們就回來了。`;
+  } else if(hard===0){
+    v.innerHTML = `沒有人被擋在外面了，但還有 <span class="gold">${easy}</span> 個人太輕鬆。你開了 ${paths} 條路。`;
+    b.innerHTML = `你多準備的是：<b class="gold">${addList}</b>。<br><br>
+      沒投進的人不見了，這是一大步。但接住不等於練到：對某些人來說，這節課依然太簡單，他們玩得很開心，卻整節課沒有進步。<br><br>
+      <b>融合不是把標準降到最低</b>，是讓每個人都有一個他跳得到、但要跳一下的高度。把難的那條路留著，跟把簡單的那條路開出來，一樣重要。`;
+  } else {
+    v.innerHTML = `還有 <span class="no">${hard}</span> 人投不到兩球，<span class="gold">${easy}</span> 人太輕鬆。你開了 ${paths} 條路。`;
+    b.innerHTML = `你多準備的是：<b class="gold">${addList}</b>。<br><br>
+      看看紅色那幾格卡在哪一項。如果卡的是「聽不懂要做什麼」，那跟他的身體無關，也跟籃框無關：<b>他從頭到尾不知道你要他做什麼。</b>這一項最常被忽略，卻最便宜解決，而且給多了不會傷害任何人。<br><br>
+      回上一頁再調調看，二十六個人會即時重算。`;
+  }
+  document.getElementById("shareText").textContent =
+`我照班級平均設計了一堂投籃課。
+成果報表很好看：全班平均每人投進 ${res1.avg} 顆。
+
+把平均攤開來，底下是：
+${res1.fit} 人真的練到、${res1.easy} 人太簡單等於沒上、${res1.hard} 人幾乎一球沒投進。
+
+1952 年美國空軍量了 4,063 名飛行員的十個身體尺寸，
+十項全部落在平均範圍內的人：0 個。
+
+平均不是一個人。為平均設計，等於為沒有人設計。`;
+}
+function backToR2(){
+  document.getElementById("rep2").classList.add("hide");
+  document.getElementById("r2").classList.remove("hide");
+  drawR2(); window.scrollTo({top:0,behavior:"smooth"});
+}
+function copyShare(){
+  navigator.clipboard.writeText(document.getElementById("shareText").textContent)
+    .then(()=>alert("已複製，可以直接貼到貼文或訊息裡。"));
+}
+drawR1();
+</script>
+<div style="max-
